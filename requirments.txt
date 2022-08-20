@@ -1,0 +1,6 @@
+pytz
+pymongo
+djongo
+dnspython
+djangorestframework
+django-cors-headers
