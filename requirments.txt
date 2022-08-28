@@ -4,3 +4,4 @@ djongo
 dnspython
 djangorestframework
 django-cors-headers
+djangorestframework-simplejwt
