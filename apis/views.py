@@ -197,7 +197,7 @@ def gosearch(request):
     recipe_name_lists=[]
     for recipe in recipe_lists:
         recipe_name_lists.append(recipe["itemname"].capitalize())
-    print(str(item))
+    # print(str(item))
     # print(recipe_name_lists)
     result = search_list(recipe_name_lists,str(item["item"]).capitalize())
     # print(result)
