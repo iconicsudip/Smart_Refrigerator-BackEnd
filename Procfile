@@ -1,3 +1,3 @@
-web: python apis.py runserver 0.0.0.0:$PORT
+web: gunicorn api.wsgi:application --log-file -
 python manage.py collectstatic --noinput
 manage.py migrate
