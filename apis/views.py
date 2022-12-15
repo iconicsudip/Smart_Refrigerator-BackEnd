@@ -30,6 +30,10 @@ def getData(request):
 @api_view(['POST'])
 def register(request):
     person_data = JSONParser().parse(request)
+    # {
+    #     name:"name",
+    #     username:"username"
+    # }
     person_name = person_data["name"]
     person_username = person_data["username"]
     person_email = person_data["email"]
@@ -193,6 +197,7 @@ def search_list(item_list,search_item):
 def gosearch(request):
     username = request.user
     item = JSONParser().parse(request)
+    # {item:"abc"}
     recipe_lists = list(Recipe.objects.all().exclude(authorname=username).values('itemname'))
     recipe_name_lists=[]
     for recipe in recipe_lists:
