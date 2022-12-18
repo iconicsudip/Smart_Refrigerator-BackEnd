@@ -1,2 +1,4 @@
 admin username = siteadmin
 admin password = admin
+python manage.py collectstatic --noinput
+manage.py migrate
