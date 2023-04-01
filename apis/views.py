@@ -128,6 +128,22 @@ def get_user_dashboard(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
+def user_recipe(request,id):
+    username = request.user
+    getRecipe = Recipe.objects.filter(authorname=username,id=id)
+    temp={}
+    for recipe in getRecipe:
+        temp["id"]=str(recipe.id)
+        temp["recipe_name"]=str(recipe.itemname)
+        temp["recipe_process"]=str(recipe.process).split("//")
+        temp["ingredient"]=str(recipe.ingredient).split("//")
+        temp["vegetables"]=str(recipe.vegetables).split("//")
+    if(temp=={}):
+        return Response({"alert":"Seriously? Without adding any recipe you are checking recipies ?LOL😂"}, status=status.HTTP_200_OK)
+    return Response(temp, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def recipe_delete(request,id):
     print(request.user)
     print(id)
