@@ -138,6 +138,8 @@ def user_recipe(request,id):
         temp["recipe_process"]=str(recipe.process).split("//")
         temp["ingredient"]=str(recipe.ingredient).split("//")
         temp["vegetables"]=str(recipe.vegetables).split("//")
+        temp["videourl"] = str(recipe.videourl)
+        temp["votes"] = str(recipe.votes)
     if(temp=={}):
         return Response({"alert":"Seriously? Without adding any recipe you are checking recipies ?LOL😂"}, status=status.HTTP_200_OK)
     return Response(temp, status=status.HTTP_200_OK)
