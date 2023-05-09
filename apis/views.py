@@ -271,6 +271,7 @@ def getRecipies(request,item):
         for i in recipe_list:
             if(str(item).upper() in i.itemname.upper()):
                 temp.append(i)
+        
         recipe_list = temp
     results=[]
     for recipe in recipe_list:
