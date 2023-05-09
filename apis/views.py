@@ -24,8 +24,25 @@ class MyTokenObtainPairView(TokenObtainPairView):
 # Create your views here.
 @api_view(['GET'])
 def getData(request):
-    home = {'API':'Smart Refrigerator With Smart Cooking Techniques'}
-    return Response(home)
+    home = 'Smart Refrigerator With Smart Cooking Techniques'
+    recipe = Recipe.objects.all().order_by('-votes')
+    results=[]
+    for recipe in recipe:
+        temp={}
+        temp["id"]=str(recipe.id)
+        temp["recipe_name"]=str(recipe.itemname)
+        temp["recipe_process"]=str(recipe.process).split("//")
+        temp["ingredient"]=str(recipe.ingredient).split("//")
+        temp["vegetables"]=str(recipe.vegetables).split("//")
+        temp["videourl"] = str(recipe.videourl)
+        temp["votes"] = str(recipe.votes)
+        temp["author_name"] = str(recipe.authorname)
+        results.append(temp)
+    context = {
+        "data": results[:4],
+        "home": home
+    }
+    return Response(context,status=status.HTTP_200_OK)
 
 @api_view(['POST'])
 def register(request):
@@ -80,7 +97,7 @@ def register(request):
 def addrecipe(request):
     reciepe = JSONParser().parse(request)
     data = json.dumps(reciepe,indent=4)
-    print(data)
+    # print(data)
     username = request.user
     recipename = reciepe['recipe_name']
     ingredients = reciepe['ingredients']
@@ -118,6 +135,7 @@ def get_user_dashboard(request):
         temp["recipe_process"]=str(recipie.process).split("//")
         temp["ingredient"]=str(recipie.ingredient).split("//")
         temp["vegetables"]=str(recipie.vegetables).split("//")
+        temp["author_name"] = str(recipie.authorname)
         if len(str(recipie.videourl))>0:
             temp["videourl"] = str(recipie.videourl)
         temp["votes"] = str(recipie.votes)
@@ -140,6 +158,7 @@ def user_recipe(request,id):
         temp["vegetables"]=str(recipe.vegetables).split("//")
         temp["videourl"] = str(recipe.videourl)
         temp["votes"] = str(recipe.votes)
+        temp["author_name"] = str(recipe.authorname)
     if(temp=={}):
         return Response({"alert":"Seriously? Without adding any recipe you are checking recipies ?LOL😂"}, status=status.HTTP_200_OK)
     return Response(temp, status=status.HTTP_200_OK)
@@ -147,8 +166,8 @@ def user_recipe(request,id):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def recipe_delete(request,id):
-    print(request.user)
-    print(id)
+    # print(request.user)
+    # print(id)
     recipe = Recipe.objects.get(id=id)
     recipe.delete()
     username = request.user
@@ -238,3 +257,33 @@ def getUsername(request,email):
         return Response({"error":"User doesn't exists"},status=status.HTTP_400_BAD_REQUEST)
     serializer = UserSerializer(username,many=False)
     return Response(serializer.data,content_type=None)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getRecipies(request,item):
+    username = request.user
+    recipe_list = []
+    if(item=='all'):
+        recipe_list = Recipe.objects.all().exclude(authorname=username).order_by('-votes')
+    else:
+        recipe_list = Recipe.objects.all().exclude(authorname=username).order_by('-votes')
+        temp = []
+        for i in recipe_list:
+            if(str(item).upper() in i.itemname.upper()):
+                temp.append(i)
+        recipe_list = temp
+    results=[]
+    for recipe in recipe_list:
+        temp={}
+        temp["id"]=str(recipe.id)
+        temp["recipe_name"]=str(recipe.itemname)
+        temp["recipe_process"]=str(recipe.process).split("//")
+        temp["ingredient"]=str(recipe.ingredient).split("//")
+        temp["vegetables"]=str(recipe.vegetables).split("//")
+        temp["videourl"] = str(recipe.videourl)
+        temp["votes"] = str(recipe.votes)
+        temp["author_name"] = str(recipe.authorname)
+        results.append(temp)
+    if(len(results) == 0):
+        return Response({"notfound":"No recipe found"},status=status.HTTP_200_OK)
+    return Response({"results":results},status=status.HTTP_200_OK)
