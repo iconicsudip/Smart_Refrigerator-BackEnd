@@ -306,7 +306,7 @@ def availableVeg(request):
     return Response(raw_data,status=status.HTTP_200_OK)
 
 @api_view(['GET'])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def updatevote(request,id,type):
     getRecipe = Recipe.objects.filter(id=id)
     if(type=="increase"):
