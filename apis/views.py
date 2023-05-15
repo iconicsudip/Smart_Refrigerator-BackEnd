@@ -303,3 +303,26 @@ def getRecipies(request,item):
 def availableVeg(request):
     raw_data = FridgeSerialized(Fridge.objects.get(username=request.user)).data
     return Response(raw_data,status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def updatevote(request,id,type):
+    getRecipe = Recipe.objects.filter(id=id)
+    if(type=="increase"):
+        getRecipe.update(votes=getRecipe[0].votes + 1)
+    else:
+        getRecipe.update(votes=getRecipe[0].votes -1)
+    temp={}
+    for recipe in getRecipe:
+        temp["id"]=str(recipe.id)
+        temp["recipe_name"]=str(recipe.itemname)
+        temp["recipe_process"]=str(recipe.process).split("//")
+        temp["ingredient"]=str(recipe.ingredient).split("//")
+        temp["vegetables"]=str(recipe.vegetables).split("//")
+        temp["videourl"] = str(recipe.videourl)
+        temp["votes"] = str(recipe.votes)
+        temp["author_name"] = str(recipe.authorname)
+        temp["recipe_image"] = str(recipe.image)
+    if(temp=={}):
+        return Response({"alert":"Seriously? Without adding any recipe you are checking recipies ?LOL😂"}, status=status.HTTP_200_OK)
+    return Response(temp, status=status.HTTP_200_OK)

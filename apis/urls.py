@@ -19,6 +19,7 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path('userrecipe/<str:id>',views.user_recipe,name="user_recipe"),
+    path('updatevote/id=<str:id>&vote=<str:type>',views.updatevote,name="upvote_recipe"),
     path('getrecipies/<str:item>',views.getRecipies,name='get_recipies'),
     path('availableveg/',views.availableVeg,name='available_vegetables')
 ]
