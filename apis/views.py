@@ -37,6 +37,7 @@ def getData(request):
         temp["videourl"] = str(recipe.videourl)
         temp["votes"] = str(recipe.votes)
         temp["author_name"] = str(recipe.authorname)
+        temp["recipe_image"] = str(recipe.image)
         results.append(temp)
     context = {
         "data": results[:4],
@@ -141,6 +142,7 @@ def get_user_dashboard(request):
         if len(str(recipie.videourl))>0:
             temp["videourl"] = str(recipie.videourl)
         temp["votes"] = str(recipie.votes)
+        temp["recipe_image"] = str(recipie.image)
         results.append(temp)
     if(len(results)==0):
         return Response({"alert":"Seriously? Without adding any recipe you are checking recipies ?LOL😂"}, status=status.HTTP_200_OK)
@@ -161,6 +163,7 @@ def user_recipe(request,id):
         temp["videourl"] = str(recipe.videourl)
         temp["votes"] = str(recipe.votes)
         temp["author_name"] = str(recipe.authorname)
+        temp["recipe_image"] = str(recipe.image)
     if(temp=={}):
         return Response({"alert":"Seriously? Without adding any recipe you are checking recipies ?LOL😂"}, status=status.HTTP_200_OK)
     return Response(temp, status=status.HTTP_200_OK)
@@ -185,6 +188,8 @@ def recipe_delete(request,id):
         if len(str(recipie.videourl))>0:
             temp["videourl"] = str(recipie.videourl)
         temp["votes"] = str(recipie.votes)
+        temp["recipe_image"] = str(recipie.image)
+
         results.append(temp)
     if(len(results)==0):
         return Response({"alert":"Seriously? Without adding any recipe you are checking recipies ?LOL😂"}, status=status.HTTP_200_OK)
@@ -286,6 +291,7 @@ def getRecipies(request,item):
         temp["videourl"] = str(recipe.videourl)
         temp["votes"] = str(recipe.votes)
         temp["author_name"] = str(recipe.authorname)
+        temp["recipe_image"] = str(recipe.image)
         results.append(temp)
     if(len(results) == 0):
         return Response({"notfound":"No recipe found"},status=status.HTTP_200_OK)
