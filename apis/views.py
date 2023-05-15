@@ -293,5 +293,5 @@ def getRecipies(request,item):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def availableVeg(request):
-    raw_data = FridgeSerialized(Fridge.objects.get(username=15)).data
+    raw_data = FridgeSerialized(Fridge.objects.get(username=request.user)).data
     return Response(raw_data,status=status.HTTP_200_OK)
