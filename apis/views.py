@@ -129,16 +129,17 @@ def addrecipe(request):
 @permission_classes([IsAuthenticated])
 def updaterecipe(request):
     reciepe = JSONParser().parse(request)
-    getRecipe = Recipe.objects.filter(authorname=request.username,id=reciepe["id"])
-    recipename = getRecipe['recipe_name']
-    ingredients = getRecipe['ingredients']
+    getRecipe = Recipe.objects.filter(authorname=request.user,id=reciepe["id"])
+    temp = {}
+    recipename = reciepe['recipe_name']
+    ingredients = reciepe['ingredients']
     stringredients="//".join(ingredients)
-    recipe_process = getRecipe['recipe_process']
+    recipe_process = reciepe['recipe_process']
     strprocess = "//".join(recipe_process)
-    vegetable = getRecipe['vegetables']
+    vegetable = reciepe['vegetables']
     strvegetable = "//".join(vegetable)
-    vurl=getRecipe['video_link']
-    recipeImage = getRecipe['recipe_image']
+    vurl=reciepe['video_link']
+    recipeImage = reciepe['recipe_image']
     getRecipe.update(
         itemname=recipename,
         ingredient=stringredients,
@@ -147,16 +148,16 @@ def updaterecipe(request):
         videourl=vurl,
         image=recipeImage
     )
-    temp = {}
-    temp["id"]=str(getRecipe.id)
-    temp["recipe_name"]=str(getRecipe.itemname)
-    temp["recipe_process"]=str(getRecipe.process).split("//")
-    temp["ingredient"]=str(getRecipe.ingredient).split("//")
-    temp["vegetables"]=str(getRecipe.vegetables).split("//")
-    temp["videourl"] = str(getRecipe.videourl)
-    temp["votes"] = str(getRecipe.votes)
-    temp["author_name"] = str(getRecipe.authorname)
-    temp["recipe_image"] = str(getRecipe.image)
+    temp["id"]=str(getRecipe[0].id)
+    temp["recipe_name"]=str(getRecipe[0].itemname)
+    temp["recipe_process"]=str(getRecipe[0].process).split("//")
+    temp["ingredient"]=str(getRecipe[0].ingredient).split("//")
+    temp["vegetables"]=str(getRecipe[0].vegetables).split("//")
+    temp["videourl"] = str(getRecipe[0].videourl)
+    temp["votes"] = str(getRecipe[0].votes)
+    temp["author_name"] = str(getRecipe[0].authorname)
+    temp["recipe_image"] = str(getRecipe[0].image)
+    # print(temp)
     return Response(temp, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
