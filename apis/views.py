@@ -7,7 +7,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework import status
 from django.contrib.auth.models import User
 from apis.models import Fridge, Recipe,ValidUser
-from apis.serializers import UserSerializer,RecipeSerializer
+from apis.serializers import UserSerializer,RecipeSerializer,FridgeSerialized
 from rest_framework.permissions import IsAuthenticated
 import json
 
@@ -288,3 +288,10 @@ def getRecipies(request,item):
     if(len(results) == 0):
         return Response({"notfound":"No recipe found"},status=status.HTTP_200_OK)
     return Response({"results":results},status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def availableVeg(request):
+    raw_data = FridgeSerialized(Fridge.objects.get(username=15)).data
+    return Response(raw_data,status=status.HTTP_200_OK)
