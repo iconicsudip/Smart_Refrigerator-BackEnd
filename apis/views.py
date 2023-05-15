@@ -125,6 +125,40 @@ def addrecipe(request):
     }
     return Response(context,status=status.HTTP_200_OK)
 
+@api_view(['GET','POST'])
+@permission_classes([IsAuthenticated])
+def updaterecipe(request):
+    reciepe = JSONParser().parse(request)
+    getRecipe = Recipe.objects.filter(authorname=request.username,id=reciepe["id"])
+    recipename = getRecipe['recipe_name']
+    ingredients = getRecipe['ingredients']
+    stringredients="//".join(ingredients)
+    recipe_process = getRecipe['recipe_process']
+    strprocess = "//".join(recipe_process)
+    vegetable = getRecipe['vegetables']
+    strvegetable = "//".join(vegetable)
+    vurl=getRecipe['video_link']
+    recipeImage = getRecipe['recipe_image']
+    getRecipe.update(
+        itemname=recipename,
+        ingredient=stringredients,
+        process=strprocess,
+        vegetables=strvegetable,
+        videourl=vurl,
+        image=recipeImage
+    )
+    temp = {}
+    temp["id"]=str(getRecipe.id)
+    temp["recipe_name"]=str(getRecipe.itemname)
+    temp["recipe_process"]=str(getRecipe.process).split("//")
+    temp["ingredient"]=str(getRecipe.ingredient).split("//")
+    temp["vegetables"]=str(getRecipe.vegetables).split("//")
+    temp["videourl"] = str(getRecipe.videourl)
+    temp["votes"] = str(getRecipe.votes)
+    temp["author_name"] = str(getRecipe.authorname)
+    temp["recipe_image"] = str(getRecipe.image)
+    return Response(temp, status=status.HTTP_200_OK)
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_user_dashboard(request):
