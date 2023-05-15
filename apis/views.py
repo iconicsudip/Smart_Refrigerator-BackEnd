@@ -152,7 +152,7 @@ def get_user_dashboard(request):
 @permission_classes([IsAuthenticated])
 def user_recipe(request,id):
     username = request.user
-    getRecipe = Recipe.objects.filter(authorname=username,id=id)
+    getRecipe = Recipe.objects.filter(id=id)
     temp={}
     for recipe in getRecipe:
         temp["id"]=str(recipe.id)
