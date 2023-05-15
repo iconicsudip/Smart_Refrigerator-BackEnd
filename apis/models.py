@@ -42,6 +42,7 @@ class Recipe(models.Model):
     vegetables = models.TextField(default=None)
     videourl = models.URLField(default=None)
     votes = models.IntegerField(default=0)
+    image = models.TextField(default=None)
     def __str__(self):
         return str(self.itemname)+" ("+str(self.authorname)+")"
     
