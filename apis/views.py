@@ -164,6 +164,7 @@ def user_recipe(request,id):
         temp["votes"] = str(recipe.votes)
         temp["author_name"] = str(recipe.authorname)
         temp["recipe_image"] = str(recipe.image)
+        temp["recipe_voted"] =recipe.isvoted
     if(temp=={}):
         return Response({"alert":"Seriously? Without adding any recipe you are checking recipies ?LOL😂"}, status=status.HTTP_200_OK)
     return Response(temp, status=status.HTTP_200_OK)
@@ -305,13 +306,13 @@ def availableVeg(request):
     return Response(raw_data,status=status.HTTP_200_OK)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def updatevote(request,id,type):
     getRecipe = Recipe.objects.filter(id=id)
     if(type=="increase"):
-        getRecipe.update(votes=getRecipe[0].votes + 1)
+        getRecipe.update(votes=getRecipe[0].votes + 1,isvoted=True)
     else:
-        getRecipe.update(votes=getRecipe[0].votes -1)
+        getRecipe.update(votes=getRecipe[0].votes -1,isvoted=False)
     temp={}
     for recipe in getRecipe:
         temp["id"]=str(recipe.id)
@@ -323,6 +324,7 @@ def updatevote(request,id,type):
         temp["votes"] = str(recipe.votes)
         temp["author_name"] = str(recipe.authorname)
         temp["recipe_image"] = str(recipe.image)
+        temp["recipe_voted"] =recipe.isvoted
     if(temp=={}):
         return Response({"alert":"Seriously? Without adding any recipe you are checking recipies ?LOL😂"}, status=status.HTTP_200_OK)
     return Response(temp, status=status.HTTP_200_OK)
