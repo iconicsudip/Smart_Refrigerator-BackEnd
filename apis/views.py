@@ -107,6 +107,7 @@ def addrecipe(request):
     vegetable = reciepe['vegetables']
     strvegetable = "//".join(vegetable)
     vurl=reciepe['video_link']
+    recipeImage = reciepe['recipe_image']
     
     create_recipe = Recipe(
         authorname=User.objects.get(username=username),
@@ -114,7 +115,8 @@ def addrecipe(request):
         ingredient=stringredients,
         process=strprocess,
         vegetables=strvegetable,
-        videourl=vurl
+        videourl=vurl,
+        image=recipeImage
     )
     create_recipe.save()
     context = {
