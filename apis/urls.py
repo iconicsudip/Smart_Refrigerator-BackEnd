@@ -22,5 +22,7 @@ urlpatterns = [
     path('userrecipe/<str:id>',views.user_recipe,name="user_recipe"),
     path('updatevote/id=<str:id>&vote=<str:type>',views.updatevote,name="upvote_recipe"),
     path('getrecipies/<str:item>',views.getRecipies,name='get_recipies'),
-    path('availableveg/',views.availableVeg,name='available_vegetables')
+    path('availableveg/',views.availableVeg,name='available_vegetables'),
+    path('userdetails/<str:username>',views.userdetails,name='user_details'),
+    path('userrecipes/<str:username>',views.userrecipes,name='user_recipes'),
 ]
