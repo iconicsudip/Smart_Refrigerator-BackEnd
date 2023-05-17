@@ -37,6 +37,8 @@ def getData(request):
         temp["videourl"] = str(recipe.videourl)
         temp["votes"] = str(recipe.votes)
         temp["author_name"] = str(recipe.authorname)
+        author_image = ValidUser.objects.get(username = recipe.authorname)
+        temp["author_image"] = author_image.image
         temp["recipe_image"] = str(recipe.image)
         results.append(temp)
     context = {
@@ -174,6 +176,8 @@ def get_user_dashboard(request):
         temp["ingredient"]=str(recipie.ingredient).split("//")
         temp["vegetables"]=str(recipie.vegetables).split("//")
         temp["author_name"] = str(recipie.authorname)
+        author_image = ValidUser.objects.get(username = recipie.authorname)
+        temp["author_image"] = author_image.image
         if len(str(recipie.videourl))>0:
             temp["videourl"] = str(recipie.videourl)
         temp["votes"] = str(recipie.votes)
@@ -198,6 +202,8 @@ def user_recipe(request,id):
         temp["videourl"] = str(recipe.videourl)
         temp["votes"] = str(recipe.votes)
         temp["author_name"] = str(recipe.authorname)
+        author_image = ValidUser.objects.get(username = recipe.authorname)
+        temp["author_image"] = author_image.image
         temp["recipe_image"] = str(recipe.image)
         temp["recipe_voted"] =recipe.isvoted
     if(temp=={}):
@@ -327,6 +333,8 @@ def getRecipies(request,item):
         temp["videourl"] = str(recipe.videourl)
         temp["votes"] = str(recipe.votes)
         temp["author_name"] = str(recipe.authorname)
+        author_image = ValidUser.objects.get(username = recipe.authorname)
+        temp["author_image"] = author_image.image
         temp["recipe_image"] = str(recipe.image)
         results.append(temp)
     if(len(results) == 0):
@@ -363,3 +371,34 @@ def updatevote(request,id,type):
     if(temp=={}):
         return Response({"alert":"Seriously? Without adding any recipe you are checking recipies ?LOL😂"}, status=status.HTTP_200_OK)
     return Response(temp, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def userdetails(request,username):
+    try:
+        userdata = ValidUser.objects.get(username=User.objects.get(username=username))
+    except:
+        return Response({"error":"User doesn't exists"},status=status.HTTP_400_BAD_REQUEST)
+    raw_userdata = UserSerializer(userdata).data
+    return Response(raw_userdata, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def userrecipes(request,username):
+    getRecipe = Recipe.objects.filter(authorname=User.objects.get(username=username)).order_by("-votes")
+    results=[]
+    for recipe in getRecipe:
+        temp={}
+        temp["id"]=str(recipe.id)
+        temp["recipe_name"]=str(recipe.itemname)
+        temp["recipe_process"]=str(recipe.process).split("//")
+        temp["ingredient"]=str(recipe.ingredient).split("//")
+        temp["vegetables"]=str(recipe.vegetables).split("//")
+        temp["videourl"] = str(recipe.videourl)
+        temp["votes"] = str(recipe.votes)
+        temp["author_name"] = str(recipe.authorname)
+        author_image = ValidUser.objects.get(username = recipe.authorname)
+        temp["author_image"] = author_image.image
+        temp["recipe_image"] = str(recipe.image)
+        results.append(temp)
+    if(len(results) == 0):
+        return Response({"data":[]},status=status.HTTP_200_OK)
+    return Response({"data":results},status=status.HTTP_200_OK)
