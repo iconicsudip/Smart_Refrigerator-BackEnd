@@ -9,7 +9,7 @@ class UserSerializer(serializers.ModelSerializer):
     username = serializers.CharField()
     class Meta:
         model = ValidUser
-        fields = ('id','username','email','name')
+        fields = ('id','username','email','name','image')
 class RecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
