@@ -402,3 +402,12 @@ def userrecipes(request,username):
     if(len(results) == 0):
         return Response({"data":[]},status=status.HTTP_200_OK)
     return Response({"data":results},status=status.HTTP_200_OK)
+
+@api_view(['GET','POST'])
+@permission_classes([IsAuthenticated])
+def updateuserinfo(request,username):
+    imageuri = JSONParser().parse(request)['image']
+    ValidUser.objects.filter(username=User.objects.get(username=username)).update(image=imageuri)
+    userdata = ValidUser.objects.get(username=User.objects.get(username=username))
+    raw_userdata = UserSerializer(userdata).data
+    return Response(raw_userdata, status=status.HTTP_200_OK)

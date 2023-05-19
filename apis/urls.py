@@ -25,4 +25,5 @@ urlpatterns = [
     path('availableveg/',views.availableVeg,name='available_vegetables'),
     path('userdetails/<str:username>',views.userdetails,name='user_details'),
     path('userrecipes/<str:username>',views.userrecipes,name='user_recipes'),
+    path('updateuserinfo/<str:username>',views.updateuserinfo,name='update_userinfo'),
 ]
