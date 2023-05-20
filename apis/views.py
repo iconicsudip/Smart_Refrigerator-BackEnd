@@ -25,10 +25,25 @@ class MyTokenObtainPairView(TokenObtainPairView):
 @api_view(['GET'])
 def getData(request):
     home = 'Smart Refrigerator With Smart Cooking Techniques'
-    recipe = Recipe.objects.all().order_by('-votes')
-    results=RecipeSerializer(recipe,many=True).data
+    recipe = Recipe.objects.all().order_by('-votes')[:5]
+    results=[]
+    for recipe in recipe:
+        temp={}
+        temp["id"]=str(recipe.id)
+        temp["recipe_name"]=str(recipe.itemname)
+        temp["recipe_process"]=str(recipe.process).split("//")
+        temp["ingredient"]=str(recipe.ingredient).split("//")
+        temp["vegetables"]=str(recipe.vegetables).split("//")
+        temp["videourl"] = str(recipe.videourl)
+        temp["votes"] = str(recipe.votes)
+        temp["author_name"] = str(recipe.authorname)
+        author_image = ValidUser.objects.get(username = recipe.authorname)
+        temp["author_image"] = author_image.image
+        temp["recipe_image"] = str(recipe.image)
+        results.append(temp)
+    # results=RecipeSerializer(recipe,many=True).data
     context = {
-        "data": results[:5],
+        "data": results,
         "home": home
     }
     return Response(context,status=status.HTTP_200_OK)
@@ -135,7 +150,17 @@ def updaterecipe(request):
         videourl=vurl,
         image=recipeImage
     )
-    temp = RecipeSerializer(getRecipe[0],many=True).data
+    temp = {}
+    temp["id"]=str(getRecipe[0].id)
+    temp["recipe_name"]=str(getRecipe[0].itemname)
+    temp["recipe_process"]=str(getRecipe[0].process).split("//")
+    temp["ingredient"]=str(getRecipe[0].ingredient).split("//")
+    temp["vegetables"]=str(getRecipe[0].vegetables).split("//")
+    temp["videourl"] = str(getRecipe[0].videourl)
+    temp["votes"] = str(getRecipe[0].votes)
+    temp["author_name"] = str(getRecipe[0].authorname)
+    temp["recipe_image"] = str(getRecipe[0].image)
+    # temp = RecipeSerializer(getRecipe[0],many=True).data
     # print(temp)
     return Response(temp, status=status.HTTP_200_OK)
 
@@ -144,7 +169,23 @@ def updaterecipe(request):
 def get_user_dashboard(request):
     username = request.user
     recipies = Recipe.objects.filter(authorname=username)
-    results = RecipeSerializer(recipies,many=True).data
+    results=[]
+    for recipie in recipies:
+        temp={}
+        temp["id"]=str(recipie.id)
+        temp["recipe_name"]=str(recipie.itemname)
+        temp["recipe_process"]=str(recipie.process).split("//")
+        temp["ingredient"]=str(recipie.ingredient).split("//")
+        temp["vegetables"]=str(recipie.vegetables).split("//")
+        temp["author_name"] = str(recipie.authorname)
+        author_image = ValidUser.objects.get(username = recipie.authorname)
+        temp["author_image"] = author_image.image
+        if len(str(recipie.videourl))>0:
+            temp["videourl"] = str(recipie.videourl)
+        temp["votes"] = str(recipie.votes)
+        temp["recipe_image"] = str(recipie.image)
+        results.append(temp)
+    # results = RecipeSerializer(recipies,many=True).data
     if(len(results)==0):
         return Response({"alert":"Seriously? Without adding any recipe you are checking recipies ?LOL😂"}, status=status.HTTP_200_OK)
 
@@ -156,7 +197,20 @@ def user_recipe(request,id):
     username = request.user
     getRecipe = Recipe.objects.filter(id=id)
     temp={}
-    temp = RecipeSerializer(getRecipe).data
+    for recipe in getRecipe:
+        temp["id"]=str(recipe.id)
+        temp["recipe_name"]=str(recipe.itemname)
+        temp["recipe_process"]=str(recipe.process).split("//")
+        temp["ingredient"]=str(recipe.ingredient).split("//")
+        temp["vegetables"]=str(recipe.vegetables).split("//")
+        temp["videourl"] = str(recipe.videourl)
+        temp["votes"] = str(recipe.votes)
+        temp["author_name"] = str(recipe.authorname)
+        author_image = ValidUser.objects.get(username = recipe.authorname)
+        temp["author_image"] = author_image.image
+        temp["recipe_image"] = str(recipe.image)
+        temp["recipe_voted"] =recipe.isvoted
+    # temp = RecipeSerializer(getRecipe).data
     if(temp=={}):
         return Response({"alert":"Seriously? Without adding any recipe you are checking recipies ?LOL😂"}, status=status.HTTP_200_OK)
     return Response(temp, status=status.HTTP_200_OK)
@@ -170,7 +224,21 @@ def recipe_delete(request,id):
     recipe.delete()
     username = request.user
     recipies = Recipe.objects.filter(authorname=username)
-    results=RecipeSerializer(recipies,many=True).data
+    results=[]
+    for recipie in recipies:
+        temp={}
+        temp["id"]=str(recipie.id)
+        temp["recipe_name"]=str(recipie.itemname)
+        temp["recipe_process"]=str(recipie.process).split("//")
+        temp["ingredient"]=str(recipie.ingredient).split("//")
+        temp["vegetables"]=str(recipie.vegetables).split("//")
+        if len(str(recipie.videourl))>0:
+            temp["videourl"] = str(recipie.videourl)
+        temp["votes"] = str(recipie.votes)
+        temp["recipe_image"] = str(recipie.image)
+
+        results.append(temp)
+    # results=RecipeSerializer(recipies,many=True).data
     if(len(results)==0):
         return Response({"alert":"Seriously? Without adding any recipe you are checking recipies ?LOL😂"}, status=status.HTTP_200_OK)
     return Response(results, status=status.HTTP_200_OK)
@@ -260,7 +328,22 @@ def getRecipies(request,item):
                 temp.append(i)
         
         recipe_list = temp
-    results=RecipeSerializer(recipe_list,many=True).data
+    results=[]
+    for recipe in recipe_list:
+        temp={}
+        temp["id"]=str(recipe.id)
+        temp["recipe_name"]=str(recipe.itemname)
+        temp["recipe_process"]=str(recipe.process).split("//")
+        temp["ingredient"]=str(recipe.ingredient).split("//")
+        temp["vegetables"]=str(recipe.vegetables).split("//")
+        temp["videourl"] = str(recipe.videourl)
+        temp["votes"] = str(recipe.votes)
+        temp["author_name"] = str(recipe.authorname)
+        author_image = ValidUser.objects.get(username = recipe.authorname)
+        temp["author_image"] = author_image.image
+        temp["recipe_image"] = str(recipe.image)
+        results.append(temp)
+    # results=RecipeSerializer(recipe_list,many=True).data
     if(len(results) == 0):
         return Response({"notfound":"No recipe found"},status=status.HTTP_200_OK)
     return Response({"results":results},status=status.HTTP_200_OK)
@@ -280,7 +363,20 @@ def updatevote(request,id,type):
         getRecipe.update(votes=getRecipe[0].votes + 1,isvoted=True)
     else:
         getRecipe.update(votes=getRecipe[0].votes -1,isvoted=False)
-    temp=RecipeSerializer(getRecipe).data
+    
+    temp={}
+    for recipe in getRecipe:
+        temp["id"]=str(recipe.id)
+        temp["recipe_name"]=str(recipe.itemname)
+        temp["recipe_process"]=str(recipe.process).split("//")
+        temp["ingredient"]=str(recipe.ingredient).split("//")
+        temp["vegetables"]=str(recipe.vegetables).split("//")
+        temp["videourl"] = str(recipe.videourl)
+        temp["votes"] = str(recipe.votes)
+        temp["author_name"] = str(recipe.authorname)
+        temp["recipe_image"] = str(recipe.image)
+        temp["recipe_voted"] =recipe.isvoted
+    # temp=RecipeSerializer(getRecipe).data
     if(temp=={}):
         return Response({"alert":"Seriously? Without adding any recipe you are checking recipies ?LOL😂"}, status=status.HTTP_200_OK)
     return Response(temp, status=status.HTTP_200_OK)
@@ -297,7 +393,22 @@ def userdetails(request,username):
 @api_view(['GET'])
 def userrecipes(request,username):
     getRecipe = Recipe.objects.filter(authorname=User.objects.get(username=username)).order_by("-votes")
-    results=RecipeSerializer(getRecipe,many=True).data
+    results=[]
+    for recipe in getRecipe:
+        temp={}
+        temp["id"]=str(recipe.id)
+        temp["recipe_name"]=str(recipe.itemname)
+        temp["recipe_process"]=str(recipe.process).split("//")
+        temp["ingredient"]=str(recipe.ingredient).split("//")
+        temp["vegetables"]=str(recipe.vegetables).split("//")
+        temp["videourl"] = str(recipe.videourl)
+        temp["votes"] = str(recipe.votes)
+        temp["author_name"] = str(recipe.authorname)
+        author_image = ValidUser.objects.get(username = recipe.authorname)
+        temp["author_image"] = author_image.image
+        temp["recipe_image"] = str(recipe.image)
+        results.append(temp)
+    # results=RecipeSerializer(getRecipe,many=True).data
     if(len(results) == 0):
         return Response({"data":[]},status=status.HTTP_200_OK)
     return Response({"data":results},status=status.HTTP_200_OK)
