@@ -28,7 +28,7 @@ def getData(request):
     recipe = Recipe.objects.all().order_by('-votes')
     results=RecipeSerializer(recipe,many=True).data
     context = {
-        "data": results[:4],
+        "data": results[:10],
         "home": home
     }
     return Response(context,status=status.HTTP_200_OK)
