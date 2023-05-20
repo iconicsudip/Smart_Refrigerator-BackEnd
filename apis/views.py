@@ -166,9 +166,10 @@ def updaterecipe(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def get_user_dashboard(request):
+def get_user_dashboard(request,start):
     username = request.user
-    recipies = Recipe.objects.filter(authorname=username)
+    total_count = Recipe.objects.filter(authorname=username).count()
+    recipies = Recipe.objects.filter(authorname=username)[start:start+4]
     results=[]
     for recipie in recipies:
         temp={}
@@ -189,7 +190,7 @@ def get_user_dashboard(request):
     if(len(results)==0):
         return Response({"alert":"Seriously? Without adding any recipe you are checking recipies ?LOL😂"}, status=status.HTTP_200_OK)
 
-    return Response(results, status=status.HTTP_200_OK)
+    return Response({"results":results,"total":total_count}, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -315,11 +316,13 @@ def getUsername(request,email):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def getRecipies(request,item):
+def getRecipies(request,item,start):
     username = request.user
     recipe_list = []
+
     if(item=='all'):
-        recipe_list = Recipe.objects.all().exclude(authorname=username).order_by('-votes')
+        total_count = Recipe.objects.all().exclude(authorname=username).order_by('-votes').count()
+        recipe_list = Recipe.objects.all().exclude(authorname=username).order_by('-votes')[start:start+4]
     else:
         recipe_list = Recipe.objects.all().exclude(authorname=username).order_by('-votes')
         temp = []
@@ -327,7 +330,8 @@ def getRecipies(request,item):
             if(str(item).upper() in i.itemname.upper()):
                 temp.append(i)
         
-        recipe_list = temp
+        total_count = len(temp)
+        recipe_list = temp[start:start+4]
     results=[]
     for recipe in recipe_list:
         temp={}
@@ -346,7 +350,7 @@ def getRecipies(request,item):
     # results=RecipeSerializer(recipe_list,many=True).data
     if(len(results) == 0):
         return Response({"notfound":"No recipe found"},status=status.HTTP_200_OK)
-    return Response({"results":results},status=status.HTTP_200_OK)
+    return Response({"results":results,"total":total_count},status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
@@ -391,8 +395,9 @@ def userdetails(request,username):
     return Response(raw_userdata, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
-def userrecipes(request,username):
-    getRecipe = Recipe.objects.filter(authorname=User.objects.get(username=username)).order_by("-votes")
+def userrecipes(request,username,start):
+    total_count = Recipe.objects.filter(authorname=User.objects.get(username=username)).order_by("-votes").count()
+    getRecipe = Recipe.objects.filter(authorname=User.objects.get(username=username)).order_by("-votes")[start:start+4]
     results=[]
     for recipe in getRecipe:
         temp={}
@@ -410,8 +415,8 @@ def userrecipes(request,username):
         results.append(temp)
     # results=RecipeSerializer(getRecipe,many=True).data
     if(len(results) == 0):
-        return Response({"data":[]},status=status.HTTP_200_OK)
-    return Response({"data":results},status=status.HTTP_200_OK)
+        return Response({"data":[],"total":total_count},status=status.HTTP_200_OK)
+    return Response({"data":results,"total":total_count},status=status.HTTP_200_OK)
 
 @api_view(['GET','POST'])
 @permission_classes([IsAuthenticated])
