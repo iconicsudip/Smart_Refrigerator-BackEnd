@@ -24,10 +24,5 @@
             "src":"/(.*)",
             "dest":"api/wsgi.py"
         }
-    ],
-    "functions": {
-        "bot/**/*": {
-            "maxDuration": 60
-        }
-    }
+    ]
 }
