@@ -169,24 +169,35 @@ def updaterecipe(request):
 def get_user_dashboard(request,start):
     username = request.user
     total_count = Recipe.objects.filter(authorname=username).count()
-    recipies = Recipe.objects.filter(authorname=username)[start:start+4]
-    # results=[]
-    # for recipie in recipies:
-    #     temp={}
-    #     temp["id"]=str(recipie.id)
-    #     temp["recipe_name"]=str(recipie.itemname)
-    #     temp["recipe_process"]=str(recipie.process).split("//")
-    #     temp["ingredient"]=str(recipie.ingredient).split("//")
-    #     temp["vegetables"]=str(recipie.vegetables).split("//")
-    #     temp["author_name"] = str(recipie.authorname)
-    #     author_image = ValidUser.objects.get(username = recipie.authorname)
-    #     temp["author_image"] = author_image.image
-    #     if len(str(recipie.videourl))>0:
-    #         temp["videourl"] = str(recipie.videourl)
-    #     temp["votes"] = str(recipie.votes)
-    #     temp["recipe_image"] = str(recipie.image)
-    #     results.append(temp)
-    results = RecipeSerializer(recipies,many=True).data
+    recipies = Recipe.objects.filter(authorname=username).values(
+        'id',
+        'itemname',
+        'process',
+        'ingredient',
+        'vegetables',
+        'authorname',
+        'videourl',
+        'votes',
+        'image'
+    )[start:start+4]
+    results=[]
+    for recipie in recipies:
+        temp = {
+            "id": str(recipie['id']),
+            "recipe_name": str(recipie['itemname']),
+            "recipe_process": str(recipie['process']).split("//"),
+            "ingredient": str(recipie['ingredient']).split("//"),
+            "vegetables": str(recipie['vegetables']).split("//"),
+            "author_name": str(recipie['authorname']),
+            "author_image": ValidUser.objects.get(username=recipie['authorname']).image,
+            "votes": str(recipie['votes']),
+            "recipe_image": str(recipie['image'])
+        }
+        if recipie['videourl']:
+            temp["videourl"] = str(recipie['videourl'])
+
+        results.append(temp)
+    # results = RecipeSerializer(recipies,many=True).data
     if(len(results)==0):
         return Response({"alert":"Seriously? Without adding any recipe you are checking recipies ?LOL😂"}, status=status.HTTP_200_OK)
 
